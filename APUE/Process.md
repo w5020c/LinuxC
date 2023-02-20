@@ -1,19 +1,24 @@
 # 进程
 
-
 ### PID
+
 类型 pid_t
+
 - ps axf 查看进程树
 - ps axm
 - ps ax -L
 - ps -ef
+
+函数
+
+- getpid()
+- getppid()
+
 ### 进程的产生
-- fork() 
-        - 注意理解关键字 duplicating 意味着拷贝 克隆 一模一样
-        - fork 后父子进程的区别 ： fork 的返回值不一样 pid不同 ppid也不同 未决信号与文🔓 不继承资源利用量清0
-        - init进程 是所以进程的祖先进程 pid == 1
-        - 调度器的调度策略来决定哪个进程先运行
-~~~ c
+
+- fork() - 注意理解关键字 duplicating 意味着拷贝 克隆 一模一样 - fork 后父子进程的区别 ： fork 的返回值不一样 pid 不同 ppid 也不同 未决信号与文 🔓 不继承资源利用量清 0 - init 进程 是所以进程的祖先进程 pid == 1 - 调度器的调度策略来决定哪个进程先运行
+
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -36,9 +41,9 @@ int main()
     return 0;
 }
 
-~~~
+```
 
-~~~ c
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -73,14 +78,16 @@ int main()
     exit(0);
 }
 
-~~~
+```
 
 - vfork()
 
 ### 进程的消亡以及释放资源
+
 - wait()
 - waitpid()
-~~~ c
+
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -137,18 +144,22 @@ int main()
     exit(0);
 }
 
-~~~
+```
 
-### exec函数族
+### exec 函数族
+
 **exec 替换 当前进程映像**
+
 - `extern char **environ`
 - execl
 - execlp
 - execle
 - execv
 - execvpa
-###### 一个小shell
-~~~ c
+
+###### 一个小 shell
+
+```c
 //lhq yyds
 #include <stdio.h>
 #include <unistd.h>
@@ -190,7 +201,7 @@ static void prompt()
 static int parse(char *linebuf,glob_t *globres){
     char *tok;
     int flag = 0;
-    
+
 
     while (1){
         tok = strsep(&linebuf,DELIMS);
@@ -233,11 +244,11 @@ int main()
         getline(&linebuf,&lienbuf_size,stdin);
         //解析命令
         int ret = parse(linebuf,&globres);
-        
+
         if (ret == -1){
-            
+
         }else if (ret == 0){//内部命令
-            
+
         }else if (ret == 1){//外部命令
             fflush(NULL);
             pid = fork();
@@ -251,25 +262,28 @@ int main()
             }
         }
         waitpid(pid,NULL,0);
-    } 
-    
+    }
+
     exit(0);
 }
 
-~~~
+```
 
 ### 用户权限以及组权限
-- u+s 当其他用户调用该可执行文件时，会切换成当前可执行文件的user的身份来执行
+
+- u+s 当其他用户调用该可执行文件时，会切换成当前可执行文件的 user 的身份来执行
 - g+s
 
 - uid/gid
-    - r real
-    - e effective
+  - r real
+  - e effective
 
 函数
+
 - getuid 返回 real
 - geteuid 返回 effective
-~~~ c
+
+```c
 // mysudo
 #include <stdio.h>
 #include <stdlib.h>
@@ -300,32 +314,37 @@ int main(int argc,char **argv)
     exit(0);
 }
 
-~~~
+```
 
-~~~ bash
+```bash
 $ su
 # chown root ./mysudo
 # chmod u+s ./mysudo
 
 $ ./mysudo 0 /etc/shadow
-~~~
+```
+
 - getgid
 - getegid
-- setuid 设置effective
-- setgid 设置effective
+- setuid 设置 effective
+- setgid 设置 effective
 - setreuid 交换 r e //是原子的交换
 - setregid 交换 r e
 
 ### system()
+
 可以理解成 fork+exec+wait 封装
 
 ### 进程会计
+
 - acct()
 
 ### 进程时间
+
 - times()
 
 ### 守护进程
+
 - sesion 标识是`sid`
 - 终端
 - setsid()
@@ -333,14 +352,14 @@ $ ./mysudo 0 /etc/shadow
 - getpgid()
 - setpgid()
 
-
 ### 系统日志
+
 - syslogd 服务
 - openlog
 - syslog
 - closelog
 
-~~~ c
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/syslog.h>
@@ -418,11 +437,11 @@ int main()
     exit(0);
 }
 
-~~~
+```
 
-~~~ bash
+```bash
  journalctl _PID=XXX
 
-~~~
+```
 
 @[TOC](文章目录)
